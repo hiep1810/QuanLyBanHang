@@ -15,15 +15,18 @@ import javax.swing.border.EmptyBorder;
 
 import models.KhachHang;
 import models.KhachHangDAO;
-import models.KhachHangTblModel;
+import models.table_models.KhachHangTblModel;
+
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class KhachHangDialog extends JDialog {
-
+	private KhachHang khach = null;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField maKHTxt;
 	private JTextField sdtTxt;
@@ -34,15 +37,6 @@ public class KhachHangDialog extends JDialog {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		try {
-			KhachHangDialog dialog = new KhachHangDialog();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * Create the dialog.
@@ -112,9 +106,9 @@ public class KhachHangDialog extends JDialog {
 		themBtn.setBounds(448, 199, 127, 47);
 		contentPanel.add(themBtn);
 		
-		JButton btnNewButton_1 = new JButton("Ch\u1ECDn");
-		btnNewButton_1.setBounds(447, 278, 325, 62);
-		contentPanel.add(btnNewButton_1);
+		JButton btnThem = new JButton("Ch\u1ECDn");
+		btnThem.setBounds(447, 278, 325, 62);
+		contentPanel.add(btnThem);
 		
 		JLabel lblTnKhchHng_1 = new JLabel("T\u00EAn kh\u00E1ch h\u00E0ng:");
 		lblTnKhchHng_1.setBounds(422, 42, 114, 14);
@@ -134,8 +128,8 @@ public class KhachHangDialog extends JDialog {
 		table.addMouseListener(new java.awt.event.MouseAdapter() {
 		    @Override
 		    public void mouseClicked(java.awt.event.MouseEvent evt) {
-		        int row = table.rowAtPoint(evt.getPoint());
-		      
+		        //int row = table.rowAtPoint(evt.getPoint());
+		    	int row = table.getSelectedRow();
 		        if (row >= 0) {
 		            maKHTxt.setText((String) table.getValueAt(row, 0));
 		            tenKHTxt.setText((String) table.getValueAt(row, 1));
@@ -169,5 +163,28 @@ public class KhachHangDialog extends JDialog {
 						 diaChiTxt.getText()));
 			}
 		});
+		
+		//Them khach hang vao man hinh chinh
+		btnThem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int index = table.getSelectedRow();
+				if(index >= 0) {
+					khach = new KhachHang();
+					khach.setMaKH(Integer.parseInt((String) table.getValueAt(index, 0)));
+					khach.setTenKH((String) table.getValueAt(index, 1));
+					khach.setSdt((String)table.getValueAt(index, 2));
+					khach.setDiaChi((String) table.getValueAt(index, 3));
+					khach.setCongNo(Float.parseFloat((String) table.getValueAt(index,4)));
+					KhachHangDialog.this.dispose();
+				}
+				else {
+					JOptionPane.showMessageDialog(rootPane, "Ch\\u01B0a ch\\u1ECDn kh\\u00E1ch h\\u00E0ng n\\u00E0o !!", "Alert", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+	}
+	public KhachHang getKhachHang() {
+		return khach;
+		
 	}
 }

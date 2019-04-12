@@ -1,4 +1,4 @@
-package controller;
+package screen;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;

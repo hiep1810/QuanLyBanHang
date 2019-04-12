@@ -1,4 +1,4 @@
-package buttontable;
+package models;
 
 import java.awt.*;
 import java.awt.event.*;

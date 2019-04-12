@@ -1,9 +1,11 @@
-package models;
+package models.table_models;
 
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+
+import models.SanPhamDAO;
  
 public class HienThiBanSanPhamModel extends javax.swing.table.DefaultTableModel {
 	SanPhamDAO cn = new SanPhamDAO();

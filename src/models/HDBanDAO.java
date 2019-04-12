@@ -10,36 +10,36 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import controller.DBUtil;
+import controller.DBUtilSQLServer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 public class HDBanDAO {
-	private Connection conn;
-	private ResultSet rs;
-	private PreparedStatement stmt;
-
-	public HDBanDAO() {
+	
+	public void showBangHDBan(DefaultTableModel model) {
+		Connection conn = null;
+		ResultSet rs = null;
+		Statement stmt = null;
+		KhachHang kh = null;
 		try {
-			conn = DBUtil.getConnection();
+			DBUtilSQLServer db = new DBUtilSQLServer();
+			conn = db.getConnection();
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Có lỗi xảy ra !" + e);
 		}
-	}
-
-	public void showBangHDBan(DefaultTableModel model) {
-		Vector cols = new Vector();
+		Vector<String> cols = new Vector<String>();
 		cols.addElement("Mã hóa đơn");
 		cols.addElement("Ngày bán");
 		cols.addElement("Mã khách hàng");
 
 		Vector data = new Vector();
 		try {
-			Statement statement = conn.createStatement();
+			stmt = conn.createStatement();
 
 			// where: dieu kien de tim
-			rs = statement.executeQuery("SELECT * FROM HDBan");
+			rs = stmt.executeQuery("SELECT * FROM HDBan");
 			int i = 0;
 			while (rs.next()) {
 				// Lay thong tin tung dong ra cho vao trong vector
@@ -53,7 +53,24 @@ public class HDBanDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Có lỗi xảy ra !");
+		}finally {
+		    if (rs != null) {
+		        try {
+		            rs.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		    if (stmt != null) {
+		        try {
+		            stmt.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		    if (conn != null) {
+		        try {
+		            conn.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
 		}
+		
 		for (Object a : cols) {
 			model.addColumn(a);
 		}
@@ -63,40 +80,156 @@ public class HDBanDAO {
 	}
 
 	public void addHDBan(HDBan hd) {
-
-		String sql = "INSERT INTO HDBan(maKH) VALUES (?)";
-		/*String check = "SELECT * FROM KhachHang";
-		boolean test = false;
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		KhachHang kh = null;
 		try {
-			stmt = conn.prepareStatement(check);
-			rs = stmt.executeQuery();
-			while (rs.next()) {
-				String compare = rs.getString("maHDBan");
-				if (compare.equals(hd.getMaKH())) {
-					test = true;
-				}
-			}
+			DBUtilSQLServer db = new DBUtilSQLServer();
+			conn = db.getConnection();
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Có lỗi khi thêm sản phẩm!\n" + e);
-		}*/
-		try {/*
-			if (true) {
-				JOptionPane.showMessageDialog(null, "Sản phẩm đã tồn tại !");
-			} else {
-			*/
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Có lỗi xảy ra !" + e);
+		}
+		String sql = "INSERT INTO HDBan(maKH) VALUES (?)";
+		
+		try {
 				stmt = conn.prepareStatement(sql);
 
 				stmt.setString(1, hd.getMaKH());
 				
 				stmt.executeUpdate();
-			//}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Lỗi khi nhập dữ liệu!");
+		}finally {
+		    if (rs != null) {
+		        try {
+		            rs.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		    if (stmt != null) {
+		        try {
+		            stmt.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		    if (conn != null) {
+		        try {
+		            conn.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
 		}
 	}
+	public HDBan getHDBan() {
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		HDBan hd = null;
+		try {
+			DBUtilSQLServer db = new DBUtilSQLServer();
+			conn = db.getConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Có lỗi xảy ra !" + e);
+		}
+		try {
+			
+			stmt = conn.prepareStatement("SELECT TOP 1 * FROM HDBan ORDER BY maHDBan DESC ");
+			rs = stmt.executeQuery();
+			
+			while(rs.next()) {
+				hd = new HDBan();
+				hd.setMaHDBan(rs.getInt(1));
+				hd.setNgayBan(rs.getString(2));
+			}
+			
+	} catch (Exception e) {
+		e.printStackTrace();
+		JOptionPane.showMessageDialog(null, "Lỗi khi nhập dữ liệu!");
+	}finally {
+	    if (rs != null) {
+	        try {
+	            rs.close();
+	        } catch (SQLException e) { /* ignored */}
+	    }
+	    if (stmt != null) {
+	        try {
+	            stmt.close();
+	        } catch (SQLException e) { /* ignored */}
+	    }
+	    if (conn != null) {
+	        try {
+	            conn.close();
+	        } catch (SQLException e) { /* ignored */}
+	    }
+	}
+	    return hd;
+}
+	public void addHDBan(int maKH) {
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		HDBan hd = null;
+		try {
+			DBUtilSQLServer db = new DBUtilSQLServer();
+			conn = db.getConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Có lỗi xảy ra !" + e);
+		}
+		String sql = "INSERT INTO HDBan(maKH) VALUES (?)";
+		
+		try {
+				stmt = conn.prepareStatement(sql);
 
+				stmt.setString(1, Integer.toString(maKH));
+				
+				System.out.println(stmt.executeUpdate());
+				
+				PreparedStatement stmt1 = conn.prepareStatement("SELECT TOP 1 * FROM HDBan ORDER BY maHDBan DESC ");
+				rs = stmt1.executeQuery();
+				System.out.println(rs.next());
+				while(rs.next()) {
+					System.out.println(rs.getInt(1));
+					System.out.println(rs.getString(2));
+					hd.setMaHDBan(rs.getInt(1));
+					hd.setNgayBan(rs.getString(2));
+				}
+				
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Lỗi khi nhập dữ liệu!");
+		}finally {
+		    if (rs != null) {
+		        try {
+		            rs.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		    if (stmt != null) {
+		        try {
+		            stmt.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		    if (conn != null) {
+		        try {
+		            conn.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		}
+		
+	}
 	public void editHDBan(HDBan hd) {
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			DBUtilSQLServer db = new DBUtilSQLServer();
+			conn = db.getConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Có lỗi xảy ra !" + e);
+		}
 		String sql = "UPDATE HDBan SET maKH=? WHERE maHDBan=?";
 		try {
 			stmt = conn.prepareStatement(sql);
@@ -108,10 +241,36 @@ public class HDBanDAO {
 
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Lỗi cập nhật !");
+		}finally {
+		    if (rs != null) {
+		        try {
+		            rs.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		    if (stmt != null) {
+		        try {
+		            stmt.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		    if (conn != null) {
+		        try {
+		            conn.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
 		}
 	}
 
 	public boolean deleteHDBan(HDBan hd) {
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			DBUtilSQLServer db = new DBUtilSQLServer();
+			conn = db.getConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Có lỗi xảy ra !" + e);
+		}
 		boolean tich = false;
 		Object[] options = { "Yes", "No" };
 		int n = JOptionPane.showOptionDialog(null, "Bạn có muốn xóa dữ liệu này không?", "Confirm to Delete?",
@@ -128,6 +287,22 @@ public class HDBanDAO {
 				JOptionPane.showMessageDialog(null, "Không thể xóa ");
 
 				tich = false;
+			}finally {
+			    if (rs != null) {
+			        try {
+			            rs.close();
+			        } catch (SQLException e) { /* ignored */}
+			    }
+			    if (stmt != null) {
+			        try {
+			            stmt.close();
+			        } catch (SQLException e) { /* ignored */}
+			    }
+			    if (conn != null) {
+			        try {
+			            conn.close();
+			        } catch (SQLException e) { /* ignored */}
+			    }
 			}
 		}
 
@@ -137,78 +312,6 @@ public class HDBanDAO {
 		return tich;
 	}
 
-	public void showBangKhachHangFind(DefaultTableModel model) {
-		Vector cols = new Vector();
-		cols.addElement("Mã khách hàng");
-		cols.addElement("Tên khách hàng");
-		cols.addElement("Số điện thoại");
-		cols.addElement("Địa chỉ");
-		cols.addElement("Công nợ");
-
-		for (Object a : cols) {
-			model.addColumn(a);
-		}
-
-	}
-	public void showKhachHangDefault(JLabel tenKH, JLabel sdt, JLabel diaChi, JLabel congNo) {
-		String sql = "SELECT * FROM KhachHang LIMIT 2";
-		try {
-			PreparedStatement stmt = conn.prepareStatement(sql);
-			rs = stmt.executeQuery();
-			while(rs.next()) {
-				tenKH.setText(rs.getString(2));
-				sdt.setText(rs.getString(3));
-				diaChi.setText(rs.getString(4));
-				congNo.setText(rs.getString(5));
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	public void showBangKhachHangFind(DefaultTableModel model, String search, boolean isMaKH) {
-		// TODO Auto-generated method stub
-
-		Vector cols = new Vector();
-		cols.addElement("Mã khách hàng");
-		cols.addElement("Tên khách hàng");
-		cols.addElement("Số điện thoại");
-		cols.addElement("Địa chỉ");
-		cols.addElement("Công nợ");
-
-		Vector data = new Vector();
-		try {
-			String sql = "";
-			if (isMaKH) {
-				sql = "SELECT * FROM KhachHang WHERE maKH LIKE ?";
-			} else {
-				sql = "SELECT * FROM KhachHang WHERE tenKH LIKE ?";
-			}
-			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, "%" + search + "%");
-			// where: dieu kien de tim
-			rs = statement.executeQuery();
-			int i = 0;
-			while (rs.next()) {
-				// Lay thong tin tung dong ra cho vao trong vector
-				Vector xemKH = new Vector();
-				xemKH.addElement(rs.getString(1));
-				xemKH.addElement(rs.getString(2));
-				xemKH.addElement(rs.getString(3));
-				xemKH.addElement(rs.getString(4));
-				xemKH.addElement(rs.getString(5));
-				data.add(xemKH);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Có lỗi xảy ra !");
-		}
-		for (Object a : cols) {
-			model.addColumn(a);
-		}
-		for (Object a : data) {
-			model.addRow((Vector) a);
-		}
-	}
+	
 	
 }

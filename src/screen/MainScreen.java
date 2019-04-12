@@ -21,13 +21,13 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import buttontable.ButtonColumn;
-
-import controller.CongNoDialog;
-import models.HienThiBanSanPhamModel;
-import models.HienThiTimKiemSanPhamModel;
+import models.ButtonColumn;
+import models.HDBan;
+import models.HDBanDAO;
+import models.KhachHang;
 import models.KhachHangDAO;
-
+import models.table_models.HienThiBanSanPhamModel;
+import models.table_models.HienThiTimKiemSanPhamModel;
 
 import javax.swing.JTabbedPane;
 import javax.swing.JComboBox;
@@ -54,58 +54,70 @@ import javax.swing.JToggleButton;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class MainScreen extends JFrame {
+public class MainScreen extends JPanel {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private int maKH = 1;//Ma KH default
 	private JPanel contentPane;
 	private JTextField searchTxt;
 	private JFormattedTextField giamGiaTxt;
-	private JTextField textField;
+	private JTextField tienTraTxt;
 	private float tienTraTemp = 0;
 	private boolean checkDaTinhNo = false;
 	/**
 	 * Launch the application.
 	 */
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					MainScreen frame = new MainScreen();
 					frame.setVisible(true);
+					
+					
+					JFrame f = new JFrame();
+					f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					f.setVisible(true);
+					f.setBounds(0,0,1010,610);
+					f.getContentPane().add(frame);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
 	}
-
+	
 	/**
 	 * Create the frame.
 	 */
 	public MainScreen() {
 		// Main sreen :
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 0, 1200, 735);
+		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(0, 0, 1000, 600);
+		setLayout(null);
 		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
+		//contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setBounds(0,0,1000,600);
 		contentPane.setLayout(null);
-
+		add(contentPane);
+		
 		// TabbedPane :
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(0, 0, 1184, 696);
-		contentPane.add(tabbedPane);
+		//JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		//tabbedPane.setBounds(0, 0, 1000, 600);
+		//contentPane.add(tabbedPane);
 
 		JPanel panel = new JPanel();
-		tabbedPane.addTab("New tab", null, panel, null);
+		//tabbedPane.addTab("New tab", null, panel, null);
+		panel.setBounds(0, 0, 1000, 600);
 		panel.setLayout(null);
-
+		contentPane.add(panel);
+		
 		JPanel panel_4 = new JPanel();
 		panel_4.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel_4.setBounds(793, 11, 376, 297);
+		panel_4.setBounds(653, 11, 332, 241);
 		panel.add(panel_4);
 		panel_4.setLayout(null);
 		
@@ -119,33 +131,34 @@ public class MainScreen extends JFrame {
 		Border lineBorder = BorderFactory.createLineBorder(Color.blue);
 		*/
 
-		JLabel lblNewLabel = new JLabel("Công nợ");
+		JLabel lblNewLabel = new JLabel("C\u00F4ng n\u1EE3 : ");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblNewLabel.setBounds(20, 183, 145, 24);
+		lblNewLabel.setBounds(10, 156, 120, 24);
 		panel_4.add(lblNewLabel);
 
-		JLabel lblKhchHng = new JLabel("Khách hàng");
+		JLabel lblKhchHng = new JLabel("Kh\u00E1ch h\u00E0ng");
 		lblKhchHng.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		lblKhchHng.setBounds(10, 11, 155, 37);
 		panel_4.add(lblKhchHng);
 
-		JLabel tenKH = new JLabel("Tên khách hàng :");
+		JLabel tenKH = new JLabel("T\u00EAn kh\u00E1ch h\u00E0ng :");
 		tenKH.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		tenKH.setBounds(20, 78, 145, 24);
+		tenKH.setBounds(10, 51, 145, 24);
 		panel_4.add(tenKH);
 
-		JLabel lblNewLabel_2 = new JLabel("Số điện thoại :");
+		JLabel lblNewLabel_2 = new JLabel("S\u1ED1 \u0111i\u1EC7n tho\u1EA1i :");
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblNewLabel_2.setBounds(20, 113, 145, 24);
+		lblNewLabel_2.setBounds(10, 86, 145, 24);
 		panel_4.add(lblNewLabel_2);
 
-		JLabel lblNewLabel_3 = new JLabel("Địa chỉ :");
+		JLabel lblNewLabel_3 = new JLabel("\u0110\u1ECBa ch\u1EC9 :");
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblNewLabel_3.setBounds(20, 148, 74, 24);
+		lblNewLabel_3.setBounds(10, 121, 74, 24);
 		panel_4.add(lblNewLabel_3);
 
-		JButton btnNewButton_1 = new JButton("Đổi khách hàng");
-		btnNewButton_1.setBounds(10, 245, 155, 41);
+		JButton btnNewButton_1 = new JButton("\u0110\u1ED5i kh\u00E1ch h\u00E0ng");
+		
+		btnNewButton_1.setBounds(10, 191, 139, 41);
 		panel_4.add(btnNewButton_1);
 		
 		
@@ -155,40 +168,43 @@ public class MainScreen extends JFrame {
 		
 		JLabel sdtTxt = new JLabel("");
 		sdtTxt.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		sdtTxt.setBounds(175, 113, 191, 24);
+		sdtTxt.setBounds(131, 86, 191, 24);
 		panel_4.add(sdtTxt);
 		
 		JLabel diaChiTxt = new JLabel("");
 		diaChiTxt.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		diaChiTxt.setBounds(175, 148, 191, 24);
+		diaChiTxt.setBounds(131, 121, 191, 24);
 		panel_4.add(diaChiTxt);
 		
 		JLabel congNoTxt = new JLabel("");
 		congNoTxt.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		congNoTxt.setBounds(175, 183, 191, 24);
+		congNoTxt.setBounds(131, 156, 191, 24);
 		panel_4.add(congNoTxt);
 		
 		JLabel tenTxt = new JLabel("");
 		tenTxt.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		tenTxt.setBounds(175, 78, 191, 24);
+		tenTxt.setBounds(131, 51, 191, 24);
 		panel_4.add(tenTxt);
 
+		//Get khach hang default:
 		
 		KhachHangDAO getDataKH = new KhachHangDAO();
 		getDataKH.showKhachHangDefault(tenTxt, sdtTxt, diaChiTxt, congNoTxt);
+		getDataKH = null;
 		
-		JButton btnThmNVo = new JButton("Thêm nợ vào hóa đơn");
-		btnThmNVo.setBounds(195, 245, 171, 41);
+		JButton btnThmNVo = new JButton("Th\u00EAm n\u1EE3 v\u00E0o h\u00F3a \u0111\u01A1n");
+		btnThmNVo.setBounds(159, 191, 163, 41);
 		panel_4.add(btnThmNVo);
+		/*
 		if(Float.parseFloat(congNoTxt.getText() )>= 0) {
 			
 		}
-		
+		*/
 		
 		
 		// Panel chua thong tin tim kiem
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(10, 62, 740, 170);
+		panel_1.setBounds(10, 62, 633, 170);
 		panel_1.setLayout(null);
 		panel.add(panel_1);
 
@@ -209,13 +225,13 @@ public class MainScreen extends JFrame {
 		 * 
 		 */
 		JScrollPane scrollPane = new JScrollPane(table);
-		scrollPane.setBounds(0, 0, 740, 170);
+		scrollPane.setBounds(0, 0, 633, 170);
 
 		panel_1.add(scrollPane);
 
-		String chose[] = { "Tìm kiếm theo tên sản phẩm", "Tìm kiếm theo mã sản phẩm" };
+		String chose[] = { "T\u00ECm ki\u1EBFm theo t\u00EAn s\u1EA3n ph\u1EA9m", "T\u00ECm ki\u1EBFm theo m\u00E3 s\u1EA3n ph\u1EA9m" };
 		JComboBox comboBox = new JComboBox(chose);
-		comboBox.setBounds(540, 11, 212, 40);
+		comboBox.setBounds(436, 11, 207, 40);
 		panel.add(comboBox);
 		/*
 		 * Action delete = new AbstractAction() { public void
@@ -226,13 +242,13 @@ public class MainScreen extends JFrame {
 		 */
 
 		searchTxt = new JTextField();
-		searchTxt.setBounds(10, 11, 520, 40);
+		searchTxt.setBounds(10, 11, 416, 40);
 		panel.add(searchTxt);
 		searchTxt.setColumns(10);
 
 		// Panel chua thong tin san pham
 		JPanel panel_2 = new JPanel();
-		panel_2.setBounds(10, 273, 740, 350);
+		panel_2.setBounds(10, 273, 633, 288);
 		panel.add(panel_2);
 		panel_2.setLayout(null);
 
@@ -243,22 +259,22 @@ public class MainScreen extends JFrame {
 		table1.setRowHeight(50);
 
 		JScrollPane scrollPane1 = new JScrollPane(table1);
-		scrollPane1.setBounds(0, 0, 740, 350);
+		scrollPane1.setBounds(0, 0, 633, 288);
 
 		panel_2.add(scrollPane1);
 
 		JPanel panel_3 = new JPanel();
 		panel_3.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel_3.setBounds(793, 319, 376, 304);
+		panel_3.setBounds(653, 256, 332, 305);
 		panel.add(panel_3);
 		panel_3.setLayout(null);
 
-		JLabel lblGiaBan = new JLabel("Tổng Tiền :");
+		JLabel lblGiaBan = new JLabel("T\u1ED5ng Ti\u1EC1n :");
 		lblGiaBan.setFont(new Font("SansSerif", Font.PLAIN, 18));
 		lblGiaBan.setBounds(10, 22, 116, 30);
 		panel_3.add(lblGiaBan);
 
-		JLabel lblNewLabel_1 = new JLabel("Giảm giá :");
+		JLabel lblNewLabel_1 = new JLabel("Gi\u1EA3m gi\u00E1 :");
 		lblNewLabel_1.setFont(new Font("SansSerif", Font.PLAIN, 18));
 		lblNewLabel_1.setBounds(10, 106, 116, 30);
 		panel_3.add(lblNewLabel_1);
@@ -323,65 +339,48 @@ public class MainScreen extends JFrame {
 		});
 		
 		giamGiaTxt.setText("0");
-		giamGiaTxt.setBounds(125, 103, 142, 33);
+		giamGiaTxt.setBounds(125, 103, 194, 33);
 		panel_3.add(giamGiaTxt);
 	 	giamGiaTxt.setColumns(10);
 
-		JButton btnNewButton_4 = new JButton("Thanh Toán");
-		btnNewButton_4.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				InHoaDonDialog dl = new InHoaDonDialog();
-				dl.setLocationRelativeTo(contentPane);
-				dl.setModal(true);
-				dl.setVisible(true);
-				
-
-				
-			}
-		});
+		JButton btnNewButton_4 = new JButton("Thanh To\u00E1n");
+		
 		btnNewButton_4.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnNewButton_4.setBounds(0, 244, 376, 60);
+		btnNewButton_4.setBounds(0, 244, 332, 61);
 		panel_3.add(btnNewButton_4);
 
-		JLabel lblTongKet = new JLabel("Tổng Tiền Phải Trả :");
+		JLabel lblTongKet = new JLabel("Phải Trả :");
 		lblTongKet.setFont(new Font("SansSerif", Font.PLAIN, 18));
-		lblTongKet.setBounds(10, 147, 183, 30);
+		lblTongKet.setBounds(10, 147, 116, 30);
 		panel_3.add(lblTongKet);
 
 		JLabel showTongTienLabel = new JLabel("0");
 		showTongTienLabel.setForeground(Color.RED);
 		showTongTienLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		showTongTienLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		showTongTienLabel.setBounds(136, 22, 230, 30);
+		showTongTienLabel.setBounds(136, 21, 183, 30);
 
 		panel_3.add(showTongTienLabel);
-
-		JToggleButton toggleButton = new JToggleButton("%");
-		toggleButton.setBounds(320, 103, 46, 33);
-		panel_3.add(toggleButton);
-
-		JToggleButton toggleButton_1 = new JToggleButton("$");
-		toggleButton_1.setBounds(277, 103, 46, 33);
-		panel_3.add(toggleButton_1);
 
 		JLabel tongTienPhaiTraLabel = new JLabel("0");
 		tongTienPhaiTraLabel.setForeground(Color.RED);
 		tongTienPhaiTraLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		tongTienPhaiTraLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		tongTienPhaiTraLabel.setBounds(203, 146, 163, 30);
+		tongTienPhaiTraLabel.setBounds(125, 147, 194, 30);
 		panel_3.add(tongTienPhaiTraLabel);
 
-		JLabel lblKhchTr = new JLabel("Khách Trả :");
+		JLabel lblKhchTr = new JLabel("Kh\u00E1ch Tr\u1EA3 :");
 		lblKhchTr.setFont(new Font("SansSerif", Font.PLAIN, 18));
 		lblKhchTr.setBounds(10, 188, 183, 30);
 		panel_3.add(lblKhchTr);
 
-		textField = new JTextField();
-		textField.setBounds(203, 188, 163, 30);
-		panel_3.add(textField);
-		textField.setColumns(10);
+		tienTraTxt = new JTextField();
+		tienTraTxt.setText("0");
+		tienTraTxt.setBounds(125, 188, 194, 30);
+		panel_3.add(tienTraTxt);
+		tienTraTxt.setColumns(10);
 		
-		JLabel noLabel = new JLabel("Trả nợ : ");
+		JLabel noLabel = new JLabel("Tr\u1EA3 n\u1EE3 : ");
 		noLabel.setFont(new Font("SansSerif", Font.PLAIN, 18));
 		noLabel.setBounds(10, 65, 116, 30);
 		panel_3.add(noLabel);
@@ -390,18 +389,18 @@ public class MainScreen extends JFrame {
 		traNoLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		traNoLabel.setForeground(Color.BLACK);
 		traNoLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		traNoLabel.setBounds(136, 63, 230, 30);
+		traNoLabel.setBounds(136, 63, 186, 30);
 		panel_3.add(traNoLabel);
 
-		JButton btnXoaHang = new JButton("Xóa hàng");
-		btnXoaHang.setBounds(612, 243, 138, 23);
+		JButton btnXoaHang = new JButton("X\u00F3a h\u00E0ng");
+		btnXoaHang.setBounds(505, 243, 138, 23);
 		panel.add(btnXoaHang);
 		btnXoaHang.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				int confirm = JOptionPane.showConfirmDialog(null, "Bạn muốn xóa những mặt hàng đã chọn ?");
+				int confirm = JOptionPane.showConfirmDialog(null, "B\u1EA1n mu\u1ED1n x\u00F3a nh\u1EEFng m\u1EB7t h\u00E0ng \u0111\u00E3 ch\u1ECDn ?");
 				if (confirm == JOptionPane.YES_OPTION) {
 
 					for (int i = table1.getRowCount() - 1; i >= 0; i--) {
@@ -426,7 +425,7 @@ public class MainScreen extends JFrame {
 				if (table1.getRowCount() == 0) {
 					showTongTienLabel.setText("0");
 					if(Integer.parseInt(giamGiaTxt.getText()) > sum) {
-						JOptionPane.showMessageDialog(null, "Giảm giá không được hơn tiền phải trả");
+						JOptionPane.showMessageDialog(null, "Gi\u1EA3m gi\u00E1 kh\u00F4ng \u0111\u01B0\u1EE3c h\u01A1n ti\u1EC1n ph\u1EA3i tr\u1EA3");
 						tongTienPhaiTraLabel.setText(String.valueOf(sum));
 						giamGiaTxt.setText("0");
 					}
@@ -454,7 +453,7 @@ public class MainScreen extends JFrame {
 				if ((Integer) table.getValueAt(i, 5) > 1) {
 					((DefaultTableModel) table.getModel()).setValueAt((Integer) table.getValueAt(i, 5) - 1, i, 5);
 				} else {
-					int confirm = JOptionPane.showConfirmDialog(null, "Xóa sản phẩm?");
+					int confirm = JOptionPane.showConfirmDialog(null, "X\u00F3a s\u1EA3n ph\u1EA9m?" );
 					if (confirm == JOptionPane.YES_OPTION) {
 						((DefaultTableModel) table.getModel()).removeRow(i);
 					} else {
@@ -475,7 +474,7 @@ public class MainScreen extends JFrame {
 
 					((DefaultTableModel) table.getModel()).setValueAt((Integer) table.getValueAt(i, 5) + 1, i, 5);
 				} else {
-					JOptionPane.showMessageDialog(null, "Số lượng bán không được hơn số lượng có");
+					JOptionPane.showMessageDialog(null, "S\u1ED1 l\u01B0\u1EE3ng b\u00E1n kh\u00F4ng \u0111\u01B0\u1EE3c h\u01A1n s\u1ED1 l\u01B0\u1EE3ng c\u00F3");
 				}
 			}
 		};
@@ -500,8 +499,8 @@ public class MainScreen extends JFrame {
 							table1.getModel().setValueAt((Integer) table1.getValueAt(j, 5) + 1, j, 5);
 							check = false;
 						} else {
-							JOptionPane.showMessageDialog(null,
-									"Số sản phẩm bán không được lớn hơn số sản phẩm đang có");
+							JOptionPane.showMessageDialog(null, "S\u1ED1 s\u1EA3n ph\u1EA9m b\u00E1n kh\u00F4ng \u0111\u01B0\u1EE3c l\u1EDBn h\u01A1n s\u1ED1 s\u1EA3n ph\u1EA9m \u0111ang c\u00F3"
+									);
 							check = false;
 						}
 					}
@@ -546,6 +545,29 @@ public class MainScreen extends JFrame {
 
 		searchTxt.addActionListener(action);
 		
+		btnNewButton_1.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent arg0) {
+				traNoLabel.setText("0");
+				KhachHangDialog dialog = new KhachHangDialog();
+				dialog.setLocationRelativeTo(contentPane);
+				dialog.setModal(true);
+				dialog.setVisible(true);
+				KhachHang temp = dialog.getKhachHang();
+				
+				if(temp == null) {
+					//do nothing
+				}else {
+					tenTxt.setText(temp.getTenKH());
+					sdtTxt.setText(temp.getSdt());
+					diaChiTxt.setText(temp.getDiaChi());
+					congNoTxt.setText(Float.toString(temp.getCongNo()));
+					
+					//ghi ma khach hang ma ta tinh no vao bien toan cuc maKH
+					maKH = temp.getMaKH();
+				}
+			}
+		});
 		
 		btnThmNVo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -575,7 +597,37 @@ public class MainScreen extends JFrame {
 				cn = null;
 			}
 		});
-		
+		btnNewButton_4.addActionListener(new ActionListener() {
+			
+			
+			
+			public void actionPerformed(ActionEvent e) {
+				
+				HDBanDAO st = new HDBanDAO();
+				st.addHDBan(maKH);
+				HDBan hd = st.getHDBan();
+				System.out.println("Giam gia:"+Float.parseFloat(giamGiaTxt.getText()));
+				InHoaDonDialog dl = new InHoaDonDialog(maKH,hd,
+													   table1,
+													   Float.parseFloat(giamGiaTxt.getText()),
+													   Float.parseFloat(congNoTxt.getText()),
+													   Float.parseFloat(tienTraTxt.getText()));
+				dl.setLocationRelativeTo(contentPane);
+				dl.setModal(true);
+				dl.setVisible(true);
+				
+				//reset tat ca:
+				table.setModel(new HienThiTimKiemSanPhamModel());
+				table1.setModel(new HienThiBanSanPhamModel());
+				KhachHangDAO getDataKH = new KhachHangDAO();
+				getDataKH.showKhachHangDefault(tenTxt, sdtTxt, diaChiTxt, congNoTxt);
+				giamGiaTxt.setText("0");
+				congNoTxt.setText("0");
+				tienTraTxt.setText("0");
+				showTongTienLabel.setText("0");
+				tongTienPhaiTraLabel.setText("0");
+			}
+		});
 		giamGiaTxt.addActionListener(new ActionListener() {
 
 			@Override
@@ -587,7 +639,7 @@ public class MainScreen extends JFrame {
 					showTongTienLabel.setText(String.valueOf(sum));
 					tongTienPhaiTraLabel.setText(String.valueOf(sum));
 					//tongTienPhaiTraLabel.setText(String.valueOf(sum - Integer.parseInt(giamGiaTxt.getText())));
-					JOptionPane.showMessageDialog(null, "Không có hàng để trử tiền ");
+					JOptionPane.showMessageDialog(null, "Kh\u00F4ng c\u00F3 h\u00E0ng \u0111\u1EC3 tr\u1EED ti\u1EC1n ");
 					giamGiaTxt.setText("0");
 				}
 				else {
@@ -603,7 +655,7 @@ public class MainScreen extends JFrame {
 					
 					if(sum - Integer.parseInt(giamGiaTxt.getText()) < 0) {
 						giamGiaTxt.setText("0");
-						JOptionPane.showMessageDialog(null, "Không được giảm giá hơn giá hàng !!!");
+						JOptionPane.showMessageDialog(null, "Kh\u00F4ng \u0111\u01B0\u1EE3c gi\u1EA3m gi\u00E1 h\u01A1n gi\u00E1 h\u00E0ng !!!");
 						showTongTienLabel.setText(String.valueOf(sum));
 						tongTienPhaiTraLabel.setText(String.valueOf(sum + tienConNo));
 					}else {

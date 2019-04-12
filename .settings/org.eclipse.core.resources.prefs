@@ -1,12 +1,9 @@
 eclipse.preferences.version=1
-encoding//src/controller/CongNoDialog.java=UTF-8
 encoding//src/models/CTHDBanDAO.java=UTF-8
 encoding//src/models/DefTableModel.java=UTF-8
 encoding//src/models/HDBanDAO.java=UTF-8
-encoding//src/models/HienThiBanSanPhamModel.java=UTF-8
 encoding//src/models/KhachHangDAO.java=UTF-8
 encoding//src/models/SanPhamDAO.java=UTF-8
-encoding//src/qlbh/jdbc/KTDangNhap.java=UTF-8
-encoding//src/qlbh/swing/DangNhap.java=UTF-8
-encoding//src/screen/LoginScreen.java=UTF-8
+encoding//src/models/table_models/HienThiBanSanPhamModel.java=UTF-8
+encoding//src/screen/CongNoDialog.java=UTF-8
 encoding//src/screen/MainScreen.java=UTF-8

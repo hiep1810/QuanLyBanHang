@@ -168,7 +168,101 @@ public class KhachHangDAO {
 		    }
 		}
 	}
-
+	public float getNo(KhachHang kh) {
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		float no = 0;
+		try {
+			DBUtilSQLServer db = new DBUtilSQLServer();
+			conn = db.getConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Có lỗi xảy ra !" + e);
+		}
+		String sql = "SELECT congNo FROM KhachHang WHERE maKH=?";
+		try {
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, kh.getMaKH());
+			rs = stmt.executeQuery();
+			while(rs.next()) {
+				no = rs.getFloat(1);
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Lỗi cập nhật !");
+		}finally {
+		    if (rs != null) {
+		        try {
+		            rs.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		    if (stmt != null) {
+		        try {
+		            stmt.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		    if (conn != null) {
+		        try {
+		            conn.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		}
+		return no;
+	}
+	public void themNo(KhachHang kh) {
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			DBUtilSQLServer db = new DBUtilSQLServer();
+			conn = db.getConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Có lỗi xảy ra !" + e);
+		}
+		String sql = "UPDATE KhachHang SET congNo=? WHERE maKH=?";
+		try {
+			stmt = conn.prepareStatement(sql);
+			
+			//lay cong no cu:
+			System.out.println("Ma kh:"+kh.getMaKH());
+			float noCu = getNo(kh);
+			System.out.println("No cu: "+noCu);
+			float noCuVaNoMoi = noCu;
+			if(kh.getCongNo()<= 0) {
+				noCuVaNoMoi += Math.abs(kh.getCongNo());
+			}
+			else {
+				noCuVaNoMoi += -kh.getCongNo();
+			}
+			System.out.println("No moi: "+kh.getCongNo());
+			
+			System.out.println("No cu cong no moi: "+noCuVaNoMoi);
+			stmt.setFloat(1, noCuVaNoMoi);
+			
+			stmt.setInt(2, kh.getMaKH());
+			int run = stmt.executeUpdate();
+			System.out.println("run:"+run);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Lỗi cập nhật !");
+		}finally {
+		    if (rs != null) {
+		        try {
+		            rs.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		    if (stmt != null) {
+		        try {
+		            stmt.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		    if (conn != null) {
+		        try {
+		            conn.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		}
+	}
 	public void editKhachHang(KhachHang kh) {
 		Connection conn = null;
 		ResultSet rs = null;
@@ -289,7 +383,7 @@ public class KhachHangDAO {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Có lỗi xảy ra !" + e);
 		}
-		String sql = "SELECT * FROM KhachHang LIMIT 2";
+		String sql = "SELECT * FROM KhachHang where maKH = 1";
 		try {
 			PreparedStatement stmt1 = conn.prepareStatement(sql);
 			rs = stmt1.executeQuery();
@@ -319,6 +413,58 @@ public class KhachHangDAO {
 		        } catch (SQLException e) { /* ignored */}
 		    }
 		}
+	}
+	public KhachHang getKhachHang(int maKH) {
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		KhachHang kh = null;
+		try {
+			DBUtilSQLServer db = new DBUtilSQLServer();
+			conn = db.getConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Có lỗi xảy ra !" + e);
+		}
+		try {
+			String sql = "";
+			
+			sql = "SELECT * FROM KhachHang WHERE maKH = ?";
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1,Integer.toString(maKH));
+			
+			// where: dieu kien de tim
+			rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				// Lay thong tin tung dong ra cho vao trong vector
+				kh = new KhachHang();
+				kh.setTenKH(rs.getString(2));
+				kh.setSdt(rs.getString(3));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Có lỗi xảy ra !");
+		}finally {
+		    if (rs != null) {
+		        try {
+		            rs.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		    if (stmt != null) {
+		        try {
+		            stmt.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		    if (conn != null) {
+		        try {
+		            conn.close();
+		        } catch (SQLException e) { /* ignored */}
+		    }
+		}
+		return kh;
+		    
 	}
 	public void showBangKhachHangFind(DefaultTableModel model, String maKH, String tenKH, String sdt, String diaChi) {
 		// TODO Auto-generated method stub

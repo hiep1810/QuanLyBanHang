@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class DBUtilSQLServer {
 	private static Connection connection;
-	static final String JDBC_DRIVER = "org.sqlite.JDBC";
+	static final String JDBC_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 	static final String DB_URL = "jdbc:sqlserver://localhost;databaseName=QLBH;user=sa;password=123456";
 	
 	//check the connection :

@@ -1,6 +1,9 @@
-package models;
+package models.table_models;
 
 import javax.swing.table.DefaultTableModel;
+
+import models.KhachHang;
+import models.KhachHangDAO;
 
 public class KhachHangTblModel extends DefaultTableModel{
 	KhachHangDAO cn = new KhachHangDAO();
